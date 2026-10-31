@@ -110,16 +110,39 @@
               <h3 id="tasks-study-title">Tasks &amp; Study</h3>
               <p class="module-card__description">Plan tasks and make space for focused study.</p>
               <form class="task-form" id="task-form">
-                <label class="visually-hidden" for="task-input">New task title</label>
-                <input
-                  class="task-form__input"
-                  id="task-input"
-                  name="task"
-                  type="text"
-                  maxlength="120"
-                  placeholder="What needs to get done?"
-                  aria-describedby="task-message"
-                >
+                <div class="task-form__fields">
+                  <label class="visually-hidden" for="task-input">New task title</label>
+                  <input
+                    class="task-form__input"
+                    id="task-input"
+                    name="title"
+                    type="text"
+                    maxlength="120"
+                    placeholder="What needs to get done?"
+                    aria-describedby="task-message"
+                    required
+                  >
+                  <label class="visually-hidden" for="task-category">Task category</label>
+                  <select class="task-form__input" id="task-category" name="category">
+                    <option value="Study">Study</option>
+                    <option value="DSA">DSA</option>
+                    <option value="Personal">Personal</option>
+                  </select>
+                  <label class="visually-hidden" for="task-priority">Task priority</label>
+                  <select class="task-form__input" id="task-priority" name="priority">
+                    <option value="Medium">Medium priority</option>
+                    <option value="High">High priority</option>
+                    <option value="Low">Low priority</option>
+                  </select>
+                  <label class="visually-hidden" for="task-due-date">Task due date</label>
+                  <input
+                    class="task-form__input task-form__date"
+                    id="task-due-date"
+                    name="dueDate"
+                    type="date"
+                    aria-label="Task due date"
+                  >
+                </div>
                 <button class="button button--primary task-form__button" type="submit">
                   Add Task
                 </button>
