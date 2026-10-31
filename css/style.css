@@ -1130,6 +1130,177 @@ button:focus-visible,
   margin: var(--space-2) 0 0;
 }
 
+.expense-summary,
+.expense-form,
+.transaction-history {
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+
+.expense-summary__heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.expense-summary__heading h4,
+.expense-form__heading,
+.transaction-history h4 {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.expense-summary__heading span {
+  color: var(--color-subtle);
+  font-size: 11px;
+}
+
+.expense-summary__totals {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.expense-summary__item {
+  display: grid;
+  min-width: 0;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-medium);
+  background: var(--color-background);
+}
+
+.expense-summary__item span {
+  color: var(--color-muted);
+  font-size: 11px;
+}
+
+.expense-summary__item strong {
+  color: var(--color-accent);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.expense-form__heading,
+.transaction-history h4 {
+  margin-bottom: var(--space-3);
+}
+
+.expense-form__fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.expense-form__wide {
+  grid-column: 1 / -1;
+}
+
+.expense-form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.expense-form [hidden] {
+  display: none;
+}
+
+.transaction-list {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.transaction-list__empty,
+.transaction-item {
+  min-width: 0;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-medium);
+  background: var(--color-background);
+}
+
+.transaction-list__empty {
+  color: var(--color-muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.transaction-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.transaction-item__main {
+  min-width: 0;
+}
+
+.transaction-item__heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.transaction-item__heading h5 {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.transaction-item__type {
+  padding: 3px var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-small);
+  color: var(--color-muted);
+  font-size: 10px;
+}
+
+.transaction-item__type--income,
+.transaction-item__amount--income {
+  color: var(--color-accent);
+}
+
+.transaction-item__type--expense,
+.transaction-item__amount--expense {
+  color: #e3a9a9;
+}
+
+.transaction-item__amount {
+  margin-left: auto;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.transaction-item__date,
+.transaction-item__description {
+  display: block;
+  margin-top: var(--space-1);
+  color: var(--color-muted);
+  font-size: 11px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.transaction-item__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
 @media (min-width: 1400px) {
   .module-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1276,6 +1447,18 @@ button:focus-visible,
   .habit-check-ins__date {
     width: 100%;
     flex-basis: auto;
+  }
+
+  .expense-summary__totals {
+    grid-template-columns: 1fr;
+  }
+
+  .transaction-item {
+    grid-template-columns: 1fr;
+  }
+
+  .transaction-item__actions {
+    justify-content: flex-start;
   }
 }
 

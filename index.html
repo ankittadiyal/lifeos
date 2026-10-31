@@ -418,8 +418,88 @@
               <span class="module-card__icon" aria-hidden="true">04</span>
               <p class="module-card__label">MIND YOUR MONEY</p>
               <h3 id="expenses-title">Expenses</h3>
-              <p class="module-card__description">A simple overview of spending can live here.</p>
-              <span class="module-card__status">Coming soon</span>
+              <p class="module-card__description">
+                Track income and spending in INR, then review this month's balance.
+              </p>
+
+              <section class="expense-summary" aria-labelledby="expense-summary-title">
+                <div class="expense-summary__heading">
+                  <h4 id="expense-summary-title">This month</h4>
+                  <span id="expense-month-label"></span>
+                </div>
+                <div class="expense-summary__totals">
+                  <div class="expense-summary__item">
+                    <span>Income</span>
+                    <strong id="expense-income-total">₹0.00</strong>
+                  </div>
+                  <div class="expense-summary__item">
+                    <span>Expenses</span>
+                    <strong id="expense-outgoing-total">₹0.00</strong>
+                  </div>
+                  <div class="expense-summary__item">
+                    <span>Net balance</span>
+                    <strong id="expense-balance-total">₹0.00</strong>
+                  </div>
+                </div>
+              </section>
+
+              <form class="expense-form" id="expense-form">
+                <h4 class="expense-form__heading">Add or edit a transaction</h4>
+                <div class="expense-form__fields">
+                  <label class="visually-hidden" for="expense-type">Transaction type</label>
+                  <select class="task-form__input" id="expense-type" name="type" required>
+                    <option value="expense">Expense</option>
+                    <option value="income">Income</option>
+                  </select>
+
+                  <label class="visually-hidden" for="expense-amount">Amount in Indian rupees</label>
+                  <input
+                    class="task-form__input"
+                    id="expense-amount"
+                    name="amount"
+                    type="number"
+                    min="0"
+                    step="any"
+                    inputmode="decimal"
+                    placeholder="Amount (₹)"
+                    required
+                  >
+
+                  <label class="visually-hidden" for="expense-category">Category</label>
+                  <select class="task-form__input" id="expense-category" name="category" required>
+                    <option value="Food">Food</option>
+                    <option value="Travel">Travel</option>
+                    <option value="Shopping">Shopping</option>
+                    <option value="Bills">Bills</option>
+                    <option value="Education">Education</option>
+                    <option value="Other">Other</option>
+                  </select>
+
+                  <label class="visually-hidden" for="expense-date">Transaction date</label>
+                  <input class="task-form__input" id="expense-date" name="date" type="date" required>
+
+                  <label class="visually-hidden" for="expense-description">Description (optional)</label>
+                  <input
+                    class="task-form__input expense-form__wide"
+                    id="expense-description"
+                    name="description"
+                    type="text"
+                    maxlength="500"
+                    placeholder="Description (optional)"
+                  >
+                </div>
+                <div class="expense-form__actions">
+                  <button class="button button--primary" id="expense-submit" type="submit">Add transaction</button>
+                  <button class="button" id="expense-cancel-edit" type="button" hidden>Cancel edit</button>
+                </div>
+              </form>
+
+              <p class="task-message" id="expense-message" role="status" aria-live="polite"></p>
+
+              <section class="transaction-history" aria-labelledby="transaction-history-title">
+                <h4 id="transaction-history-title">Transaction history</h4>
+                <ul class="transaction-list" id="transaction-list" aria-label="Income and expense history"></ul>
+              </section>
             </article>
 
             <article class="module-card" id="calendar" tabindex="-1" aria-labelledby="calendar-title">
@@ -436,5 +516,6 @@
     <script type="module" src="js/modules/tasks.js"></script>
     <script type="module" src="js/modules/dsa.js"></script>
     <script type="module" src="js/modules/habits-ui.js"></script>
+    <script type="module" src="js/modules/expenses-ui.js"></script>
   </body>
 </html>
