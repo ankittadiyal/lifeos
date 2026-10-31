@@ -4,15 +4,29 @@ import {
   listHabits,
 } from "./habits.js";
 import { calculateHabitAnalytics } from "./habit-analytics.js";
+import {
+  countAllTasks,
+  countCompletedTasks,
+  getCompletionPercentage,
+} from "./dashboard-metrics.js";
 import { listProblems } from "./dsa.js";
 import { calculateDsaInsights } from "./dsa-insights.js";
 import {
-  calculateBudgetStatus,
-  calculateMonthlySummary,
   getMonthlyBudget,
   getTodayDateString as getExpenseTodayDateString,
   listTransactions,
 } from "./expenses.js";
+import {
+  calculateBudgetStatus,
+  calculateMonthlySummary,
+} from "./expense-calculations.js";
+
+export {
+  countAllTasks,
+  countCompletedTasks,
+  countPendingTasks,
+  getCompletionPercentage,
+} from "./dashboard-metrics.js";
 
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 const MAX_LIST_ITEMS = 4;
@@ -21,25 +35,6 @@ const dateFormatter = new Intl.DateTimeFormat("en-IN", {
   day: "numeric",
   month: "short",
 });
-
-export function countAllTasks(tasks) {
-  return tasks.length;
-}
-
-export function countCompletedTasks(tasks) {
-  return tasks.reduce((count, task) => count + Number(task.completed), 0);
-}
-
-export function countPendingTasks(tasks) {
-  return tasks.filter((task) => !task.completed).length;
-}
-
-export function getCompletionPercentage(tasks) {
-  const totalTasks = countAllTasks(tasks);
-  return totalTasks === 0
-    ? 0
-    : Math.round((countCompletedTasks(tasks) / totalTasks) * 100);
-}
 
 function isValidDateString(value) {
   if (typeof value !== "string" || !DATE_PATTERN.test(value)) {

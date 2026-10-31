@@ -1,5 +1,7 @@
 import { loadData, saveData } from "../storage.js";
 
+export { calculateBudgetStatus, calculateMonthlySummary } from "./expense-calculations.js";
+
 const STORAGE_KEY = "lifeos.transactions";
 const BUDGET_STORAGE_KEY = "lifeos.monthlyBudgets";
 const TRANSACTION_TYPES = ["income", "expense"];
@@ -262,45 +264,6 @@ export function listTransactions() {
     );
 }
 
-export function calculateMonthlySummary(transactionList, referenceDate = new Date()) {
-  const month = `${referenceDate.getFullYear()}-${String(
-    referenceDate.getMonth() + 1
-  ).padStart(2, "0")}`;
-  let incomePaise = 0n;
-  let expensesPaise = 0n;
-
-  for (const transaction of transactionList) {
-    const amountPaise = Number.isSafeInteger(transaction.amountPaise)
-      ? transaction.amountPaise
-      : parseRupeesToPaise(transaction.amount);
-
-    if (
-      !isValidDate(transaction.date) ||
-      transaction.date.slice(0, 7) !== month ||
-      amountPaise === null ||
-      amountPaise <= 0
-    ) {
-      continue;
-    }
-
-    if (transaction.type === "income") {
-      incomePaise += BigInt(amountPaise);
-    } else if (transaction.type === "expense") {
-      expensesPaise += BigInt(amountPaise);
-    }
-  }
-
-  return {
-    month,
-    incomePaise,
-    expensesPaise,
-    balancePaise: incomePaise - expensesPaise,
-    income: paiseToRupees(Number(incomePaise)),
-    expenses: paiseToRupees(Number(expensesPaise)),
-    balance: paiseToRupees(Number(incomePaise - expensesPaise)),
-  };
-}
-
 function isValidMonth(value) {
   return typeof value === "string" && /^\d{4}-(0[1-9]|1[0-2])$/.test(value);
 }
@@ -419,70 +382,4 @@ export function saveMonthlyBudget(month, details) {
   monthlyBudgets = nextBudgets;
   document.dispatchEvent(new Event("lifeos:expenses-changed"));
   return getMonthlyBudget(month);
-}
-
-export function calculateBudgetStatus(transactionList, month, budget) {
-  if (!isValidMonth(month)) {
-    throw new TypeError("Choose a valid budget month.");
-  }
-  const expensesByCategory = Object.create(null);
-  let totalExpensesPaise = 0n;
-
-  for (const transaction of transactionList) {
-    const amountPaise = Number.isSafeInteger(transaction.amountPaise)
-      ? transaction.amountPaise
-      : parseRupeesToPaise(transaction.amount);
-    if (
-      transaction.type !== "expense" ||
-      !isValidDate(transaction.date) ||
-      transaction.date.slice(0, 7) !== month ||
-      amountPaise === null ||
-      amountPaise <= 0 ||
-      !TRANSACTION_CATEGORIES.includes(transaction.category)
-    ) {
-      continue;
-    }
-
-    totalExpensesPaise += BigInt(amountPaise);
-    expensesByCategory[transaction.category] =
-      (expensesByCategory[transaction.category] ?? 0n) + BigInt(amountPaise);
-  }
-
-  const categoryStatuses = Object.entries(budget.categories ?? {}).map(
-    ([category, limitPaise]) => {
-      const spentPaise = expensesByCategory[category] ?? 0n;
-      const limitPaiseBigInt = BigInt(limitPaise);
-      return {
-        category,
-        limitPaise: limitPaiseBigInt,
-        spentPaise,
-        remainingPaise: limitPaiseBigInt - spentPaise,
-        status: spentPaise > limitPaiseBigInt
-          ? "exceeded"
-          : spentPaise === limitPaiseBigInt
-            ? "reached"
-            : "within",
-      };
-    }
-  );
-  const overallPaise = budget.overallPaise ?? null;
-  const overallPaiseBigInt = overallPaise === null ? null : BigInt(overallPaise);
-
-  return {
-    month,
-    totalExpensesPaise,
-    overall: overallPaise === null
-      ? null
-      : {
-          limitPaise: overallPaiseBigInt,
-          spentPaise: totalExpensesPaise,
-          remainingPaise: overallPaiseBigInt - totalExpensesPaise,
-          status: totalExpensesPaise > overallPaiseBigInt
-            ? "exceeded"
-            : totalExpensesPaise === overallPaiseBigInt
-              ? "reached"
-              : "within",
-        },
-    categories: categoryStatuses,
-  };
 }
