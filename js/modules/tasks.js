@@ -175,6 +175,7 @@ if (JSON.stringify(savedTasks) !== JSON.stringify(tasks)) {
 function persistTasks(nextTasks) {
   saveData(STORAGE_KEY, nextTasks);
   tasks = nextTasks;
+  document.dispatchEvent(new Event("lifeos:tasks-changed"));
 }
 
 export function createTask(details) {
