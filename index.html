@@ -124,8 +124,10 @@
                   >
                   <label class="visually-hidden" for="task-category">Task category</label>
                   <select class="task-form__input" id="task-category" name="category" required>
-                    <option value="Study">Study</option>
+                    <option value="College">College</option>
                     <option value="DSA">DSA</option>
+                    <option value="Development">Development</option>
+                    <option value="Revision">Revision</option>
                     <option value="Personal">Personal</option>
                   </select>
                   <label class="visually-hidden" for="task-priority">Task priority</label>
@@ -142,6 +144,18 @@
                     type="date"
                     aria-label="Task due date"
                   >
+                  <label class="visually-hidden" for="task-duration">Estimated duration in minutes (optional)</label>
+                  <input
+                    class="task-form__input"
+                    id="task-duration"
+                    name="estimatedMinutes"
+                    type="number"
+                    min="1"
+                    max="1440"
+                    step="1"
+                    placeholder="Minutes (optional)"
+                    aria-label="Estimated duration in minutes (optional)"
+                  >
                 </div>
                 <button class="button button--primary task-form__button" type="submit">
                   Add Task
@@ -151,9 +165,28 @@
                 </button>
               </form>
               <p class="task-message" id="task-message" role="status" aria-live="polite"></p>
-              <ul class="task-list" id="task-list" aria-label="Tasks">
-                <li class="task-list__empty">No tasks yet. Add your first task above.</li>
-              </ul>
+              <div class="task-planner" id="task-planner" aria-label="Daily task planner">
+                <section class="task-group" aria-labelledby="overdue-title">
+                  <h4 id="overdue-title">Overdue <span class="task-group__count" id="overdue-count">0</span></h4>
+                  <ul class="task-list" id="overdue-task-list" aria-label="Overdue tasks"></ul>
+                </section>
+                <section class="task-group" aria-labelledby="today-title">
+                  <h4 id="today-title">Today <span class="task-group__count" id="today-count">0</span></h4>
+                  <ul class="task-list" id="today-task-list" aria-label="Today's tasks"></ul>
+                </section>
+                <section class="task-group" aria-labelledby="upcoming-title">
+                  <h4 id="upcoming-title">Upcoming <span class="task-group__count" id="upcoming-count">0</span></h4>
+                  <ul class="task-list" id="upcoming-task-list" aria-label="Upcoming tasks"></ul>
+                </section>
+                <section class="task-group" aria-labelledby="unscheduled-title">
+                  <h4 id="unscheduled-title">Unscheduled <span class="task-group__count" id="unscheduled-count">0</span></h4>
+                  <ul class="task-list" id="unscheduled-task-list" aria-label="Tasks without a due date"></ul>
+                </section>
+                <section class="task-group" aria-labelledby="completed-title">
+                  <h4 id="completed-title">Completed <span class="task-group__count" id="completed-count">0</span></h4>
+                  <ul class="task-list" id="completed-task-list" aria-label="Completed tasks"></ul>
+                </section>
+              </div>
             </article>
 
             <article class="module-card" id="dsa-tracker" tabindex="-1" aria-labelledby="dsa-tracker-title">

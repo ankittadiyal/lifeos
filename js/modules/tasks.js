@@ -2,6 +2,7 @@ import { loadData, saveData } from "../storage.js";
 
 const STORAGE_KEY = "lifeos.tasks";
 const PRIORITIES = ["Low", "Medium", "High"];
+const CATEGORIES = ["College", "DSA", "Development", "Revision", "Personal"];
 
 function createId(existingIds = new Set()) {
   let id;
@@ -28,6 +29,47 @@ function isValidDueDate(value) {
 
   const parsedDate = new Date(`${value}T00:00:00.000Z`);
   return !Number.isNaN(parsedDate.getTime()) && parsedDate.toISOString().slice(0, 10) === value;
+}
+
+function isValidEstimatedMinutes(value) {
+  return value === null || (
+    Number.isInteger(value) &&
+    value >= 1 &&
+    value <= 1440
+  );
+}
+
+function getLocalDateString(date = new Date()) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+export function groupTasksByDate(taskList, today = getLocalDateString()) {
+  const groups = {
+    overdue: [],
+    today: [],
+    upcoming: [],
+    unscheduled: [],
+    completed: [],
+  };
+
+  for (const task of taskList) {
+    if (task.completed) {
+      groups.completed.push(task);
+    } else if (!task.dueDate) {
+      groups.unscheduled.push(task);
+    } else if (task.dueDate < today) {
+      groups.overdue.push(task);
+    } else if (task.dueDate === today) {
+      groups.today.push(task);
+    } else {
+      groups.upcoming.push(task);
+    }
+  }
+
+  return groups;
 }
 
 function isTask(value) {
@@ -59,10 +101,18 @@ function normalizeTasks(value) {
 
     const priority = PRIORITIES.includes(task.priority) ? task.priority : "Medium";
     const dueDate = isValidDueDate(task.dueDate) ? task.dueDate : "";
-    const category =
-      typeof task.category === "string" && task.category.trim() !== ""
-        ? task.category.trim()
-        : "Study";
+    let category = task.category;
+
+    if (category === "Study") {
+      category = "College";
+    }
+
+    if (!CATEGORIES.includes(category)) {
+      category = "College";
+    }
+    const estimatedMinutes = isValidEstimatedMinutes(task.estimatedMinutes)
+      ? task.estimatedMinutes
+      : null;
     const createdAt =
       typeof task.createdAt === "string" && !Number.isNaN(Date.parse(task.createdAt))
         ? task.createdAt
@@ -74,6 +124,7 @@ function normalizeTasks(value) {
       category,
       priority,
       dueDate,
+      estimatedMinutes,
       completed: task.completed,
       createdAt,
     }];
@@ -102,15 +153,19 @@ export function createTask(details) {
   }
 
   const title = typeof details.title === "string" ? details.title.trim() : "";
-  const category =
-    typeof details.category === "string" && details.category.trim() !== ""
-      ? details.category.trim()
-      : "Study";
+  const category = details.category ?? "College";
   const priority = details.priority ?? "Medium";
   const dueDate = details.dueDate ?? "";
+  const estimatedMinutes = details.estimatedMinutes === "" || details.estimatedMinutes == null
+    ? null
+    : Number(details.estimatedMinutes);
 
   if (title === "") {
     throw new TypeError("A task title is required.");
+  }
+
+  if (!CATEGORIES.includes(category)) {
+    throw new TypeError("Choose a valid task category.");
   }
 
   if (!PRIORITIES.includes(priority)) {
@@ -121,12 +176,17 @@ export function createTask(details) {
     throw new TypeError("Due date must be a valid calendar date.");
   }
 
+  if (!isValidEstimatedMinutes(estimatedMinutes)) {
+    throw new TypeError("Estimated duration must be between 1 and 1440 minutes.");
+  }
+
   const task = {
     id: createId(new Set(tasks.map((currentTask) => currentTask.id))),
     title,
     category,
     priority,
     dueDate,
+    estimatedMinutes,
     completed: false,
     createdAt: new Date().toISOString(),
   };
@@ -146,7 +206,14 @@ export function updateTask(id, changes) {
     return null;
   }
 
-  const allowedFields = ["title", "category", "priority", "dueDate", "completed"];
+  const allowedFields = [
+    "title",
+    "category",
+    "priority",
+    "dueDate",
+    "estimatedMinutes",
+    "completed",
+  ];
   const unsupportedField = Object.keys(changes).find((field) => !allowedFields.includes(field));
 
   if (unsupportedField) {
@@ -158,8 +225,8 @@ export function updateTask(id, changes) {
   if (typeof updatedTask.title !== "string" || updatedTask.title.trim() === "") {
     throw new TypeError("A task title is required.");
   }
-  if (typeof updatedTask.category !== "string" || updatedTask.category.trim() === "") {
-    throw new TypeError("Task category cannot be empty.");
+  if (!CATEGORIES.includes(updatedTask.category)) {
+    throw new TypeError("Choose a valid task category.");
   }
   if (!PRIORITIES.includes(updatedTask.priority)) {
     throw new TypeError("Priority must be Low, Medium, or High.");
@@ -167,13 +234,14 @@ export function updateTask(id, changes) {
   if (!isValidDueDate(updatedTask.dueDate)) {
     throw new TypeError("Due date must be a valid calendar date.");
   }
+  if (!isValidEstimatedMinutes(updatedTask.estimatedMinutes)) {
+    throw new TypeError("Estimated duration must be between 1 and 1440 minutes.");
+  }
   if (typeof updatedTask.completed !== "boolean") {
     throw new TypeError("Completed must be true or false.");
   }
 
   updatedTask.title = updatedTask.title.trim();
-  updatedTask.category = updatedTask.category.trim();
-
   persistTasks(tasks.map((currentTask) => (
     currentTask.id === id ? updatedTask : currentTask
   )));
@@ -211,10 +279,25 @@ const taskInput = document.querySelector("#task-input");
 const taskCategory = document.querySelector("#task-category");
 const taskPriority = document.querySelector("#task-priority");
 const taskDueDate = document.querySelector("#task-due-date");
-const taskList = document.querySelector("#task-list");
+const taskDuration = document.querySelector("#task-duration");
+const taskPlanner = document.querySelector("#task-planner");
 const taskMessage = document.querySelector("#task-message");
 const taskSubmitButton = taskForm.querySelector('button[type="submit"]');
 const cancelEditButton = document.querySelector("#cancel-task-edit");
+const taskLists = {
+  overdue: document.querySelector("#overdue-task-list"),
+  today: document.querySelector("#today-task-list"),
+  upcoming: document.querySelector("#upcoming-task-list"),
+  unscheduled: document.querySelector("#unscheduled-task-list"),
+  completed: document.querySelector("#completed-task-list"),
+};
+const taskCounts = {
+  overdue: document.querySelector("#overdue-count"),
+  today: document.querySelector("#today-count"),
+  upcoming: document.querySelector("#upcoming-count"),
+  unscheduled: document.querySelector("#unscheduled-count"),
+  completed: document.querySelector("#completed-count"),
+};
 let editingTaskId = null;
 
 function showStorageError(error) {
@@ -223,77 +306,95 @@ function showStorageError(error) {
     "Your browser could not save this change. Check its storage settings and try again.";
 }
 
-function renderTasks() {
-  taskList.replaceChildren();
+function createTaskRow(task) {
+  const taskItem = document.createElement("li");
+  taskItem.className = "task-item";
+  taskItem.dataset.taskId = task.id;
 
-  const currentTasks = listTasks();
+  if (task.completed) {
+    taskItem.classList.add("task-item--completed");
+  }
 
-  if (currentTasks.length === 0) {
+  const taskLabel = document.createElement("label");
+  taskLabel.className = "task-item__label";
+
+  const taskCheckbox = document.createElement("input");
+  taskCheckbox.className = "task-item__checkbox";
+  taskCheckbox.type = "checkbox";
+  taskCheckbox.checked = task.completed;
+  taskCheckbox.setAttribute("aria-label", `Mark "${task.title}" complete`);
+
+  const taskDetails = document.createElement("span");
+  taskDetails.className = "task-item__details";
+
+  const taskTitle = document.createElement("span");
+  taskTitle.className = "task-item__title";
+  taskTitle.textContent = task.title;
+
+  const taskMeta = document.createElement("span");
+  taskMeta.className = "task-item__meta";
+  const dueDateText = task.dueDate ? ` · Due ${task.dueDate}` : "";
+  const durationText = task.estimatedMinutes
+    ? ` · ${task.estimatedMinutes} min`
+    : "";
+  taskMeta.textContent =
+    `${task.category} · ${task.priority} priority${dueDateText}${durationText}`;
+
+  taskDetails.append(taskTitle, taskMeta);
+  taskLabel.append(taskCheckbox, taskDetails);
+
+  const editButton = document.createElement("button");
+  editButton.className = "task-item__action";
+  editButton.type = "button";
+  editButton.dataset.taskAction = "edit";
+  editButton.textContent = "Edit";
+  editButton.setAttribute("aria-label", `Edit "${task.title}"`);
+
+  const deleteButton = document.createElement("button");
+  deleteButton.className = "task-item__action task-item__action--delete";
+  deleteButton.type = "button";
+  deleteButton.dataset.taskAction = "delete";
+  deleteButton.textContent = "Delete";
+  deleteButton.setAttribute("aria-label", `Delete "${task.title}"`);
+
+  const taskActions = document.createElement("div");
+  taskActions.className = "task-item__actions";
+  taskActions.append(editButton, deleteButton);
+
+  taskItem.append(taskLabel, taskActions);
+  return taskItem;
+}
+
+function renderTaskGroup(groupName, groupTasks) {
+  const listElement = taskLists[groupName];
+  const countElement = taskCounts[groupName];
+  listElement.replaceChildren();
+  countElement.textContent = String(groupTasks.length);
+
+  if (groupTasks.length === 0) {
     const emptyMessage = document.createElement("li");
     emptyMessage.className = "task-list__empty";
-    emptyMessage.textContent = "No tasks yet. Add your first task above.";
-    taskList.append(emptyMessage);
+    emptyMessage.textContent = "No tasks here.";
+    listElement.append(emptyMessage);
     return;
   }
 
-  for (const task of currentTasks) {
-    const taskItem = document.createElement("li");
-    taskItem.className = "task-item";
-    taskItem.dataset.taskId = task.id;
+  for (const task of groupTasks) {
+    listElement.append(createTaskRow(task));
+  }
+}
 
-    if (task.completed) {
-      taskItem.classList.add("task-item--completed");
-    }
+function renderTasks() {
+  const groups = groupTasksByDate(listTasks());
 
-    const taskLabel = document.createElement("label");
-    taskLabel.className = "task-item__label";
-
-    const taskCheckbox = document.createElement("input");
-    taskCheckbox.className = "task-item__checkbox";
-    taskCheckbox.type = "checkbox";
-    taskCheckbox.checked = task.completed;
-    taskCheckbox.setAttribute("aria-label", `Mark "${task.title}" complete`);
-
-    const taskDetails = document.createElement("span");
-    taskDetails.className = "task-item__details";
-
-    const taskTitle = document.createElement("span");
-    taskTitle.className = "task-item__title";
-    taskTitle.textContent = task.title;
-
-    const taskMeta = document.createElement("span");
-    taskMeta.className = "task-item__meta";
-    const dueDateText = task.dueDate ? ` · Due ${task.dueDate}` : "";
-    taskMeta.textContent = `${task.category} · ${task.priority} priority${dueDateText}`;
-
-    taskDetails.append(taskTitle, taskMeta);
-    taskLabel.append(taskCheckbox, taskDetails);
-
-    const editButton = document.createElement("button");
-    editButton.className = "task-item__action";
-    editButton.type = "button";
-    editButton.dataset.taskAction = "edit";
-    editButton.textContent = "Edit";
-    editButton.setAttribute("aria-label", `Edit "${task.title}"`);
-
-    const deleteButton = document.createElement("button");
-    deleteButton.className = "task-item__action task-item__action--delete";
-    deleteButton.type = "button";
-    deleteButton.dataset.taskAction = "delete";
-    deleteButton.textContent = "Delete";
-    deleteButton.setAttribute("aria-label", `Delete "${task.title}"`);
-
-    const taskActions = document.createElement("div");
-    taskActions.className = "task-item__actions";
-    taskActions.append(editButton, deleteButton);
-
-    taskItem.append(taskLabel, taskActions);
-    taskList.append(taskItem);
+  for (const [groupName, groupTasks] of Object.entries(groups)) {
+    renderTaskGroup(groupName, groupTasks);
   }
 }
 
 function resetTaskForm() {
   taskForm.reset();
+  taskCategory.value = "College";
   editingTaskId = null;
   taskSubmitButton.textContent = "Add Task";
   cancelEditButton.hidden = true;
@@ -313,13 +414,14 @@ function startEditingTask(taskId) {
   taskCategory.value = task.category;
   taskPriority.value = task.priority;
   taskDueDate.value = task.dueDate;
+  taskDuration.value = task.estimatedMinutes ?? "";
   taskSubmitButton.textContent = "Save Changes";
   cancelEditButton.hidden = false;
   taskMessage.textContent = `Editing "${task.title}".`;
   taskInput.focus();
 }
 
-taskList.addEventListener("change", (event) => {
+taskPlanner.addEventListener("change", (event) => {
   if (!(event.target instanceof HTMLInputElement)) {
     return;
   }
@@ -344,7 +446,7 @@ taskList.addEventListener("change", (event) => {
   }
 });
 
-taskList.addEventListener("click", (event) => {
+taskPlanner.addEventListener("click", (event) => {
   if (!(event.target instanceof Element)) {
     return;
   }
@@ -392,6 +494,7 @@ taskForm.addEventListener("submit", (event) => {
       category: taskCategory.value,
       priority: taskPriority.value,
       dueDate: taskDueDate.value,
+      estimatedMinutes: taskDuration.value === "" ? null : Number(taskDuration.value),
     };
 
     if (editingTaskId) {
