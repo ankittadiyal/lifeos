@@ -443,6 +443,55 @@
                 </div>
               </section>
 
+              <section class="budget-section" aria-labelledby="budget-section-title">
+                <h4 id="budget-section-title">Monthly spending budgets</h4>
+                <p class="budget-section__description">
+                  Budgets are limits, not expenses. Remaining budget equals the limit minus this month's spending;
+                  changing a limit never edits transaction history.
+                </p>
+                <form class="budget-form" id="budget-form">
+                  <label class="budget-form__overall" for="budget-overall">
+                    Overall spending limit <span>(optional, INR)</span>
+                    <input
+                      class="task-form__input"
+                      id="budget-overall"
+                      name="overall"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      inputmode="decimal"
+                      placeholder="No limit"
+                    >
+                  </label>
+                  <fieldset class="budget-form__categories">
+                    <legend>Category limits <span>(optional, INR)</span></legend>
+                    <div class="budget-form__category-grid">
+                      <label for="budget-food">Food
+                        <input class="task-form__input" id="budget-food" name="Food" type="number" min="0" step="0.01" inputmode="decimal" placeholder="No limit">
+                      </label>
+                      <label for="budget-travel">Travel
+                        <input class="task-form__input" id="budget-travel" name="Travel" type="number" min="0" step="0.01" inputmode="decimal" placeholder="No limit">
+                      </label>
+                      <label for="budget-shopping">Shopping
+                        <input class="task-form__input" id="budget-shopping" name="Shopping" type="number" min="0" step="0.01" inputmode="decimal" placeholder="No limit">
+                      </label>
+                      <label for="budget-bills">Bills
+                        <input class="task-form__input" id="budget-bills" name="Bills" type="number" min="0" step="0.01" inputmode="decimal" placeholder="No limit">
+                      </label>
+                      <label for="budget-education">Education
+                        <input class="task-form__input" id="budget-education" name="Education" type="number" min="0" step="0.01" inputmode="decimal" placeholder="No limit">
+                      </label>
+                      <label for="budget-other">Other
+                        <input class="task-form__input" id="budget-other" name="Other" type="number" min="0" step="0.01" inputmode="decimal" placeholder="No limit">
+                      </label>
+                    </div>
+                  </fieldset>
+                  <button class="button button--primary" id="budget-submit" type="submit">Save this month's budgets</button>
+                </form>
+                <p class="task-message" id="budget-message" role="status" aria-live="polite"></p>
+                <div class="budget-status" id="budget-status" aria-live="polite"></div>
+              </section>
+
               <form class="expense-form" id="expense-form">
                 <h4 class="expense-form__heading">Add or edit a transaction</h4>
                 <div class="expense-form__fields">
@@ -459,7 +508,7 @@
                     name="amount"
                     type="number"
                     min="0"
-                    step="any"
+                    step="0.01"
                     inputmode="decimal"
                     placeholder="Amount (₹)"
                     required
@@ -488,6 +537,7 @@
                     placeholder="Description (optional)"
                   >
                 </div>
+                <p class="expense-form__hint">Amounts are saved in paise and support up to two decimal places.</p>
                 <div class="expense-form__actions">
                   <button class="button button--primary" id="expense-submit" type="submit">Add transaction</button>
                   <button class="button" id="expense-cancel-edit" type="button" hidden>Cancel edit</button>

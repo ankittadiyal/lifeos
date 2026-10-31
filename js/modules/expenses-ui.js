@@ -3,7 +3,11 @@ import {
   createTransaction,
   deleteTransaction,
   getTodayDateString,
+  getMonthlyBudget,
   listTransactions,
+  saveMonthlyBudget,
+  calculateBudgetStatus,
+  TRANSACTION_CATEGORIES,
   updateTransaction,
 } from "./expenses.js";
 
@@ -21,6 +25,9 @@ const incomeTotal = document.querySelector("#expense-income-total");
 const expensesTotal = document.querySelector("#expense-outgoing-total");
 const balanceTotal = document.querySelector("#expense-balance-total");
 const monthLabel = document.querySelector("#expense-month-label");
+const budgetForm = document.querySelector("#budget-form");
+const budgetMessage = document.querySelector("#budget-message");
+const budgetStatus = document.querySelector("#budget-status");
 let editingTransactionId = null;
 
 const currencyFormatter = new Intl.NumberFormat("en-IN", {
@@ -40,6 +47,135 @@ function showStorageError(error) {
   console.error("Could not save transaction data.", error);
   message.textContent =
     "Your browser could not save this change. Check its storage settings and try again.";
+}
+
+function getCurrentMonthString() {
+  const today = getTodayDateString();
+  return today.slice(0, 7);
+}
+
+function formatPaise(amountPaise) {
+  const amount = BigInt(amountPaise);
+  const isNegative = amount < 0n;
+  const absoluteAmount = isNegative ? -amount : amount;
+  const rupees = absoluteAmount / 100n;
+  const paise = String(absoluteAmount % 100n).padStart(2, "0");
+  const formattedParts = currencyFormatter.formatToParts(rupees);
+  const formattedAmount = formattedParts
+    .map((part) => part.type === "fraction" ? paise : part.value)
+    .join("");
+
+  if (!isNegative) {
+    return formattedAmount;
+  }
+
+  const minusSign = new Intl.NumberFormat("en-IN")
+    .formatToParts(-1)
+    .find((part) => part.type === "minusSign")?.value ?? "-";
+  return `${minusSign}${formattedAmount}`;
+}
+
+function formatPaiseForInput(amountPaise) {
+  const amount = BigInt(amountPaise);
+  const rupees = amount / 100n;
+  const paise = String(amount % 100n).padStart(2, "0");
+  return `${rupees}.${paise}`;
+}
+
+function createBudgetNotice(status) {
+  const paragraph = document.createElement("p");
+  paragraph.className = `budget-status__notice budget-status__notice--${status.status}`;
+
+  if (status.status === "exceeded") {
+    const exceededBy = status.remainingPaise < 0n
+      ? -status.remainingPaise
+      : status.remainingPaise;
+    paragraph.textContent =
+      `Budget exceeded by ${formatPaise(exceededBy)}; ` +
+      `remaining: ${formatPaise(status.remainingPaise)}.`;
+  } else if (status.status === "reached") {
+    paragraph.textContent = `Budget reached. Remaining: ${formatPaise(0n)}.`;
+  } else {
+    paragraph.textContent = `Remaining: ${formatPaise(status.remainingPaise)}.`;
+  }
+  return paragraph;
+}
+
+function createCategoryBudgetRow(status) {
+  const item = document.createElement("li");
+  item.className = "budget-status__category";
+
+  const name = document.createElement("strong");
+  name.textContent = status.category;
+
+  const figures = document.createElement("span");
+  figures.textContent =
+    `Spent ${formatPaise(status.spentPaise)} of ${formatPaise(status.limitPaise)}`;
+
+  item.append(name, figures, createBudgetNotice(status));
+  return item;
+}
+
+function loadBudgetInputs() {
+  const budget = getMonthlyBudget(getCurrentMonthString());
+  budgetForm.elements.overall.value = budget.overall === null ? "" : String(budget.overall);
+
+  for (const category of TRANSACTION_CATEGORIES) {
+    const categoryInput = budgetForm.elements.namedItem(category);
+    const categoryLimit = budget.categoryLimits[category];
+    categoryInput.value = categoryLimit === undefined ? "" : String(categoryLimit);
+  }
+}
+
+function renderBudgetStatus(transactionList, month) {
+  const budget = getMonthlyBudget(month);
+  const status = calculateBudgetStatus(transactionList, month, budget);
+  budgetStatus.replaceChildren();
+
+  const heading = document.createElement("h5");
+  heading.className = "budget-status__heading";
+  heading.textContent = "Spending against budgets";
+  budgetStatus.append(heading);
+
+  const overall = document.createElement("section");
+  overall.className = "budget-status__overall";
+  const overallTitle = document.createElement("h6");
+  overallTitle.textContent = "Overall";
+  overall.append(overallTitle);
+
+  if (status.overall === null) {
+    const noOverallLimit = document.createElement("p");
+    noOverallLimit.className = "budget-status__empty";
+    noOverallLimit.textContent = "No overall spending limit set for this month.";
+    overall.append(noOverallLimit);
+  } else {
+    const spent = document.createElement("p");
+    spent.textContent =
+      `Spent ${formatPaise(status.overall.spentPaise)} of ${formatPaise(status.overall.limitPaise)}`;
+    overall.append(spent, createBudgetNotice(status.overall));
+  }
+  budgetStatus.append(overall);
+
+  const categories = document.createElement("section");
+  categories.className = "budget-status__categories";
+  const categoryTitle = document.createElement("h6");
+  categoryTitle.textContent = "Category limits";
+  const categoryList = document.createElement("ul");
+  categoryList.className = "budget-status__list";
+  categoryList.setAttribute("aria-label", "Category budget status");
+  categories.append(categoryTitle, categoryList);
+
+  if (status.categories.length === 0) {
+    const empty = document.createElement("li");
+    empty.className = "budget-status__empty";
+    empty.textContent = "No category limits set for this month.";
+    categoryList.append(empty);
+  } else {
+    for (const categoryStatus of status.categories) {
+      categoryList.append(createCategoryBudgetRow(categoryStatus));
+    }
+  }
+  budgetStatus.append(categories);
 }
 
 function createTransactionItem(transaction) {
@@ -62,7 +198,7 @@ function createTransactionItem(transaction) {
 
   const amount = document.createElement("strong");
   amount.className = `transaction-item__amount transaction-item__amount--${transaction.type}`;
-  amount.textContent = currencyFormatter.format(transaction.amount);
+  amount.textContent = formatPaise(transaction.amountPaise);
   heading.append(category, type, amount);
 
   const date = document.createElement("time");
@@ -104,11 +240,12 @@ function renderTransactions() {
   const currentTransactions = listTransactions();
   const summary = calculateMonthlySummary(currentTransactions);
 
-  incomeTotal.textContent = currencyFormatter.format(summary.income);
-  expensesTotal.textContent = currencyFormatter.format(summary.expenses);
-  balanceTotal.textContent = currencyFormatter.format(summary.balance);
+  incomeTotal.textContent = formatPaise(summary.incomePaise);
+  expensesTotal.textContent = formatPaise(summary.expensesPaise);
+  balanceTotal.textContent = formatPaise(summary.balancePaise);
   const [year, month] = summary.month.split("-").map(Number);
   monthLabel.textContent = monthFormatter.format(new Date(year, month - 1, 1));
+  renderBudgetStatus(currentTransactions, summary.month);
   transactionList.replaceChildren();
 
   if (currentTransactions.length === 0) {
@@ -142,7 +279,7 @@ function beginEditing(transactionId) {
 
   editingTransactionId = transaction.id;
   typeInput.value = transaction.type;
-  amountInput.value = String(transaction.amount);
+  amountInput.value = formatPaiseForInput(transaction.amountPaise);
   categoryInput.value = transaction.category;
   dateInput.value = transaction.date;
   descriptionInput.value = transaction.description;
@@ -151,6 +288,33 @@ function beginEditing(transactionId) {
   message.textContent = `Editing ${transaction.category} transaction.`;
   typeInput.focus();
 }
+
+budgetForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const categories = Object.fromEntries(
+    TRANSACTION_CATEGORIES.map((category) => [
+      category,
+      budgetForm.elements.namedItem(category).value,
+    ])
+  );
+
+  try {
+    saveMonthlyBudget(getCurrentMonthString(), {
+      overall: budgetForm.elements.overall.value,
+      categories,
+    });
+    budgetMessage.textContent = "This month's budgets saved.";
+    renderTransactions();
+  } catch (error) {
+    if (error instanceof TypeError) {
+      budgetMessage.textContent = error.message;
+      return;
+    }
+    console.error("Could not save monthly budgets.", error);
+    budgetMessage.textContent =
+      "Your browser could not save these budgets. Check its storage settings and try again.";
+  }
+});
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -218,4 +382,5 @@ transactionList.addEventListener("click", (event) => {
 });
 
 cancelButton.addEventListener("click", resetForm);
+loadBudgetInputs();
 renderTransactions();

@@ -1131,6 +1131,7 @@ button:focus-visible,
 }
 
 .expense-summary,
+.budget-section,
 .expense-form,
 .transaction-history {
   margin-top: var(--space-5);
@@ -1187,6 +1188,142 @@ button:focus-visible,
   overflow-wrap: anywhere;
 }
 
+.budget-section > h4 {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.budget-section__description {
+  margin: var(--space-2) 0 0;
+  color: var(--color-muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.budget-form {
+  display: grid;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.budget-form__overall,
+.budget-form__categories label,
+.budget-form__categories legend {
+  display: grid;
+  gap: var(--space-1);
+  color: var(--color-muted);
+  font-size: 11px;
+}
+
+.budget-form__overall span,
+.budget-form__categories legend span {
+  color: var(--color-subtle);
+}
+
+.budget-form__categories {
+  min-width: 0;
+  margin: 0;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-medium);
+}
+
+.budget-form__categories legend {
+  padding: 0 var(--space-1);
+}
+
+.budget-form__category-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.budget-form [hidden] {
+  display: none;
+}
+
+.budget-status {
+  display: grid;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.budget-status__heading {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.budget-status__overall,
+.budget-status__categories {
+  min-width: 0;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-medium);
+  background: var(--color-background);
+}
+
+.budget-status__overall h6,
+.budget-status__categories h6 {
+  margin: 0 0 var(--space-2);
+  color: var(--color-text);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.budget-status__overall p,
+.budget-status__empty {
+  margin: var(--space-1) 0 0;
+  color: var(--color-muted);
+  font-size: 11px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.budget-status__notice {
+  font-weight: 600;
+}
+
+.budget-status__notice--within {
+  color: var(--color-accent) !important;
+}
+
+.budget-status__notice--reached {
+  color: #e9c36a !important;
+}
+
+.budget-status__notice--exceeded {
+  color: #f0aaaa !important;
+}
+
+.budget-status__list {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.budget-status__category {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: var(--space-1) var(--space-2);
+  color: var(--color-muted);
+  font-size: 11px;
+}
+
+.budget-status__category strong {
+  color: var(--color-text);
+}
+
+.budget-status__category .budget-status__notice {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
 .expense-form__heading,
 .transaction-history h4 {
   margin-bottom: var(--space-3);
@@ -1200,6 +1337,13 @@ button:focus-visible,
 
 .expense-form__wide {
   grid-column: 1 / -1;
+}
+
+.expense-form__hint {
+  margin: var(--space-2) 0 0;
+  color: var(--color-subtle);
+  font-size: 10px;
+  line-height: 1.5;
 }
 
 .expense-form__actions {
@@ -1450,6 +1594,11 @@ button:focus-visible,
   }
 
   .expense-summary__totals {
+    grid-template-columns: 1fr;
+  }
+
+  .budget-form__category-grid,
+  .budget-status__category {
     grid-template-columns: 1fr;
   }
 
