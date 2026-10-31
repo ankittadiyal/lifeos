@@ -72,6 +72,36 @@ export function groupTasksByDate(taskList, today = getLocalDateString()) {
   return groups;
 }
 
+export function filterAndSortTasks(taskCollection, filters = {}) {
+  const searchTerm = (filters.search ?? "").trim().toLocaleLowerCase();
+  const status = filters.status ?? "all";
+  const category = filters.category ?? "all";
+  const priorityOrder = filters.priorityOrder ?? "high-first";
+  const priorityRank = priorityOrder === "low-first"
+    ? { Low: 0, Medium: 1, High: 2 }
+    : { High: 0, Medium: 1, Low: 2 };
+
+  const matchingTasks = taskCollection.filter((task) => {
+    const matchesSearch = searchTerm === "" ||
+      task.title.toLocaleLowerCase().includes(searchTerm) ||
+      task.category.toLocaleLowerCase().includes(searchTerm);
+    const matchesStatus =
+      status === "all" ||
+      (status === "active" && !task.completed) ||
+      (status === "completed" && task.completed);
+    const matchesCategory = category === "all" || task.category === category;
+
+    return matchesSearch && matchesStatus && matchesCategory;
+  });
+
+  return [...matchingTasks].sort((first, second) => {
+    const rankDifference =
+      (priorityRank[first.priority] ?? 1) - (priorityRank[second.priority] ?? 1);
+
+    return rankDifference || first.title.localeCompare(second.title);
+  });
+}
+
 function isTask(value) {
   return (
     value !== null &&
@@ -281,6 +311,12 @@ const taskPriority = document.querySelector("#task-priority");
 const taskDueDate = document.querySelector("#task-due-date");
 const taskDuration = document.querySelector("#task-duration");
 const taskPlanner = document.querySelector("#task-planner");
+const taskFilters = document.querySelector("#task-filters");
+const taskSearch = document.querySelector("#task-search");
+const taskStatusFilter = document.querySelector("#task-status-filter");
+const taskCategoryFilter = document.querySelector("#task-category-filter");
+const taskPrioritySort = document.querySelector("#task-priority-sort");
+const taskFilterEmpty = document.querySelector("#task-filter-empty");
 const taskMessage = document.querySelector("#task-message");
 const taskSubmitButton = taskForm.querySelector('button[type="submit"]');
 const cancelEditButton = document.querySelector("#cancel-task-edit");
@@ -385,10 +421,32 @@ function renderTaskGroup(groupName, groupTasks) {
 }
 
 function renderTasks() {
-  const groups = groupTasksByDate(listTasks());
+  const visibleTasks = filterAndSortTasks(listTasks(), {
+    search: taskSearch.value,
+    status: taskStatusFilter.value,
+    category: taskCategoryFilter.value,
+    priorityOrder: taskPrioritySort.value,
+  });
+  const groups = groupTasksByDate(visibleTasks);
+  const hasNoMatches = visibleTasks.length === 0 && listTasks().length > 0;
+  taskFilterEmpty.hidden = !hasNoMatches;
+  taskPlanner.hidden = hasNoMatches;
 
   for (const [groupName, groupTasks] of Object.entries(groups)) {
     renderTaskGroup(groupName, groupTasks);
+  }
+}
+
+function handleTaskFiltersChanged(event) {
+  const searchChanged = event.type === "input" && event.target === taskSearch;
+  const selectChanged =
+    event.type === "change" &&
+    (event.target === taskStatusFilter ||
+      event.target === taskCategoryFilter ||
+      event.target === taskPrioritySort);
+
+  if (searchChanged || selectChanged) {
+    renderTasks();
   }
 }
 
@@ -478,6 +536,9 @@ taskPlanner.addEventListener("click", (event) => {
     }
   }
 });
+
+taskFilters.addEventListener("input", handleTaskFiltersChanged);
+taskFilters.addEventListener("change", handleTaskFiltersChanged);
 
 taskForm.addEventListener("submit", (event) => {
   event.preventDefault();

@@ -540,6 +540,38 @@ button:focus-visible,
   font-size: 12px;
 }
 
+.task-filters {
+  display: grid;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.task-filters__search,
+.task-filters__selects {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.task-filters__search {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.task-filter-empty {
+  margin: var(--space-4) 0 0;
+  padding: var(--space-3);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-medium);
+  color: var(--color-muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.task-filter-empty[hidden] {
+  display: none;
+}
+
 .task-list {
   display: grid;
   gap: var(--space-2);
@@ -787,6 +819,9 @@ button:focus-visible,
     padding: var(--space-4);
   }
 
+  .task-filters__selects {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
