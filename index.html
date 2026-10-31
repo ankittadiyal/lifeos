@@ -5,17 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta
       name="description"
-      content="LifeOS is your calm, personal space for planning the day ahead."
+      content="LifeOS is your personal space for planning, learning, and building good habits."
     >
-    <title>LifeOS — Your personal space</title>
+    <title>Dashboard — LifeOS</title>
     <link rel="stylesheet" href="css/style.css">
   </head>
   <body>
     <a class="skip-link" href="#main-content">Skip to main content</a>
 
     <div class="app-shell">
-      <aside class="sidebar" aria-label="Sidebar">
-        <a class="brand" href="#welcome" aria-label="LifeOS home">
+      <aside class="sidebar" aria-label="LifeOS sidebar">
+        <a class="brand" href="#dashboard" aria-label="LifeOS dashboard">
           <span class="brand__mark" aria-hidden="true">L</span>
           <span class="brand__name">LifeOS</span>
         </a>
@@ -24,31 +24,40 @@
           <p class="navigation__label">Workspace</p>
           <ul class="navigation__list">
             <li>
-              <a class="navigation__link navigation__link--active" href="#welcome" aria-current="page">
+              <a class="navigation__link navigation__link--active" href="#dashboard" aria-current="page">
                 <span class="navigation__dot" aria-hidden="true"></span>
                 Dashboard
               </a>
             </li>
             <li>
-              <span class="navigation__link navigation__link--disabled">
+              <a class="navigation__link" href="#tasks-study">
                 <span class="navigation__dot" aria-hidden="true"></span>
-                Focus
-                <span class="navigation__soon">Soon</span>
-              </span>
+                Tasks &amp; Study
+              </a>
             </li>
             <li>
-              <span class="navigation__link navigation__link--disabled">
+              <a class="navigation__link" href="#dsa-tracker">
+                <span class="navigation__dot" aria-hidden="true"></span>
+                DSA Tracker
+              </a>
+            </li>
+            <li>
+              <a class="navigation__link" href="#habits">
                 <span class="navigation__dot" aria-hidden="true"></span>
                 Habits
-                <span class="navigation__soon">Soon</span>
-              </span>
+              </a>
             </li>
             <li>
-              <span class="navigation__link navigation__link--disabled">
+              <a class="navigation__link" href="#expenses">
                 <span class="navigation__dot" aria-hidden="true"></span>
-                Notes
-                <span class="navigation__soon">Soon</span>
-              </span>
+                Expenses
+              </a>
+            </li>
+            <li>
+              <a class="navigation__link" href="#calendar">
+                <span class="navigation__dot" aria-hidden="true"></span>
+                Calendar
+              </a>
             </li>
           </ul>
         </nav>
@@ -60,54 +69,80 @@
       </aside>
 
       <main class="main-content" id="main-content">
-        <header class="topbar">
-          <p class="topbar__context">YOUR PERSONAL SPACE</p>
-          <span class="topbar__avatar" aria-label="Your profile">Y</span>
+        <header class="topbar" id="dashboard">
+          <div class="topbar__heading">
+            <p class="topbar__context">YOUR PERSONAL SPACE</p>
+            <h1>Dashboard</h1>
+          </div>
+          <span class="topbar__avatar" aria-hidden="true">Y</span>
         </header>
 
-        <section class="welcome" id="welcome" aria-labelledby="welcome-title">
+        <section class="welcome" aria-labelledby="welcome-title">
           <div class="welcome__copy">
             <p class="eyebrow">A FRESH PAGE</p>
-            <h1 id="welcome-title">Welcome to <span>LifeOS.</span></h1>
+            <h2 id="welcome-title">Welcome to <span>LifeOS.</span></h2>
             <p class="welcome__description">
-              Make room for what matters. Your personal space to find focus,
-              build good rhythms, and move through life one step at a time.
+              Make room for what matters. Find focus, build good rhythms, and
+              move through life one step at a time.
             </p>
-            <a class="welcome__link" href="#getting-started">
-              Take a look around
+            <a class="welcome__link" href="#workspace">
+              Explore your workspace
               <span aria-hidden="true">&rarr;</span>
             </a>
           </div>
 
-          <div class="welcome__art" aria-hidden="true">
-            <div class="welcome__glow"></div>
-            <div class="welcome__orbit welcome__orbit--outer"></div>
-            <div class="welcome__orbit welcome__orbit--inner"></div>
-            <div class="welcome__core"></div>
-            <span class="welcome__spark welcome__spark--one"></span>
-            <span class="welcome__spark welcome__spark--two"></span>
-          </div>
+          <div class="welcome__art" aria-hidden="true"></div>
         </section>
 
-        <section class="getting-started" id="getting-started" aria-labelledby="getting-started-title">
-          <div class="getting-started__heading">
+        <section class="workspace" id="workspace" aria-labelledby="workspace-title">
+          <header class="workspace__heading">
             <div>
-              <p class="eyebrow">YOUR DASHBOARD</p>
-              <h2 id="getting-started-title">A calmer way to start</h2>
+              <p class="eyebrow">YOUR OVERVIEW</p>
+              <h2 id="workspace-title">Your workspace</h2>
             </div>
-            <span class="getting-started__step">01 <span>/ 04</span></span>
-          </div>
+            <p class="workspace__note">Your tools, all in one place.</p>
+          </header>
 
-          <div class="starter-card">
-            <span class="starter-card__icon" aria-hidden="true">✦</span>
-            <div>
-              <h3>Your space is ready</h3>
-              <p>
-                This is the beginning. Your tools for planning, focus, and
-                reflection will find a home here.
-              </p>
-            </div>
-            <span class="starter-card__status">JUST GETTING STARTED</span>
+          <div class="module-grid">
+            <article class="module-card" id="tasks-study" tabindex="-1" aria-labelledby="tasks-study-title">
+              <span class="module-card__icon" aria-hidden="true">01</span>
+              <p class="module-card__label">PLAN YOUR TIME</p>
+              <h3 id="tasks-study-title">Tasks &amp; Study</h3>
+              <p class="module-card__description">Plan tasks and make space for focused study.</p>
+              <span class="module-card__status">Coming soon</span>
+            </article>
+
+            <article class="module-card" id="dsa-tracker" tabindex="-1" aria-labelledby="dsa-tracker-title">
+              <span class="module-card__icon" aria-hidden="true">02</span>
+              <p class="module-card__label">KEEP PRACTICING</p>
+              <h3 id="dsa-tracker-title">DSA Tracker</h3>
+              <p class="module-card__description">A future home for your data structures and algorithms progress.</p>
+              <span class="module-card__status">Coming soon</span>
+            </article>
+
+            <article class="module-card" id="habits" tabindex="-1" aria-labelledby="habits-title">
+              <span class="module-card__icon" aria-hidden="true">03</span>
+              <p class="module-card__label">BUILD YOUR RHYTHM</p>
+              <h3 id="habits-title">Habits</h3>
+              <p class="module-card__description">Make room for small routines that add up over time.</p>
+              <span class="module-card__status">Coming soon</span>
+            </article>
+
+            <article class="module-card" id="expenses" tabindex="-1" aria-labelledby="expenses-title">
+              <span class="module-card__icon" aria-hidden="true">04</span>
+              <p class="module-card__label">MIND YOUR MONEY</p>
+              <h3 id="expenses-title">Expenses</h3>
+              <p class="module-card__description">A simple overview of spending can live here.</p>
+              <span class="module-card__status">Coming soon</span>
+            </article>
+
+            <article class="module-card" id="calendar" tabindex="-1" aria-labelledby="calendar-title">
+              <span class="module-card__icon" aria-hidden="true">05</span>
+              <p class="module-card__label">SEE WHAT'S AHEAD</p>
+              <h3 id="calendar-title">Calendar</h3>
+              <p class="module-card__description">Keep upcoming plans and important dates in view.</p>
+              <span class="module-card__status">Coming soon</span>
+            </article>
           </div>
         </section>
       </main>
