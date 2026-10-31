@@ -102,6 +102,7 @@ if (JSON.stringify(savedProblems) !== JSON.stringify(problems)) {
 function persistProblems(nextProblems) {
   saveData(STORAGE_KEY, nextProblems);
   problems = nextProblems;
+  document.dispatchEvent(new Event("lifeos:dsa-changed"));
 }
 
 function validateProblem(details) {

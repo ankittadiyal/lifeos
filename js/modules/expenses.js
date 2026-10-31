@@ -164,6 +164,7 @@ if (JSON.stringify(savedTransactions) !== JSON.stringify(transactions)) {
 function persistTransactions(nextTransactions) {
   saveData(STORAGE_KEY, nextTransactions);
   transactions = nextTransactions;
+  document.dispatchEvent(new Event("lifeos:expenses-changed"));
 }
 
 function validateDetails(details) {
@@ -416,6 +417,7 @@ export function saveMonthlyBudget(month, details) {
   };
   saveData(BUDGET_STORAGE_KEY, nextBudgets);
   monthlyBudgets = nextBudgets;
+  document.dispatchEvent(new Event("lifeos:expenses-changed"));
   return getMonthlyBudget(month);
 }
 

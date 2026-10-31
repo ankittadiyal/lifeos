@@ -113,6 +113,7 @@ if (JSON.stringify(savedData) !== JSON.stringify(habitData)) {
 function persistData(nextData) {
   saveData(STORAGE_KEY, nextData);
   habitData = nextData;
+  document.dispatchEvent(new Event("lifeos:habits-changed"));
 }
 
 function validateTitle(title) {

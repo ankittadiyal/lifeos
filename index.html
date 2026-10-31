@@ -94,6 +94,96 @@
           <div class="welcome__art" aria-hidden="true"></div>
         </section>
 
+        <section class="dashboard-overview" aria-labelledby="dashboard-overview-title">
+          <header class="dashboard-overview__heading">
+            <div>
+              <p class="eyebrow">YOUR DAY, AT A GLANCE</p>
+              <h2 id="dashboard-overview-title">Your summary</h2>
+            </div>
+            <p class="dashboard-overview__note">Live from your LifeOS records.</p>
+          </header>
+
+          <div class="dashboard-overview__grid">
+            <article class="dashboard-card" aria-labelledby="dashboard-today-title">
+              <div class="dashboard-card__heading">
+                <h3 id="dashboard-today-title">Today's tasks</h3>
+                <a href="#tasks-study" aria-label="Open Tasks and Study">View tasks</a>
+              </div>
+              <p class="dashboard-card__metric"><strong id="dashboard-today-count">—</strong><span>due today</span></p>
+              <progress
+                class="dashboard-card__progress"
+                id="dashboard-today-progress"
+                max="100"
+                value="0"
+                aria-label="Overall task completion"
+                hidden
+              ></progress>
+              <p class="dashboard-card__support" id="dashboard-today-progress-text">No tasks tracked yet.</p>
+              <p class="dashboard-card__support" id="dashboard-today-detail">No tasks due today.</p>
+              <ul class="dashboard-card__list" id="dashboard-today-tasks" aria-label="Today's tasks">
+                <li class="dashboard-card__empty">Add a task with today's due date to see it here.</li>
+              </ul>
+            </article>
+
+            <article class="dashboard-card" aria-labelledby="dashboard-habits-title">
+              <div class="dashboard-card__heading">
+                <h3 id="dashboard-habits-title">Habit streaks</h3>
+                <a href="#habits" aria-label="Open Habits">View habits</a>
+              </div>
+              <p class="dashboard-card__metric"><strong id="dashboard-active-streak-count">—</strong><span>active streaks</span></p>
+              <ul class="dashboard-card__list" id="dashboard-habit-streaks" aria-label="Current habit streaks">
+                <li class="dashboard-card__empty">Add a habit to start building a streak.</li>
+              </ul>
+            </article>
+
+            <article class="dashboard-card" aria-labelledby="dashboard-dsa-title">
+              <div class="dashboard-card__heading">
+                <h3 id="dashboard-dsa-title">DSA progress</h3>
+                <a href="#dsa-tracker" aria-label="Open DSA Tracker">View tracker</a>
+              </div>
+              <p class="dashboard-card__metric"><strong id="dashboard-solved-count">—</strong><span>problems solved</span></p>
+              <p class="dashboard-card__support" id="dashboard-dsa-empty" hidden>
+                Track your first problem to see your DSA progress here.
+              </p>
+              <p class="dashboard-card__support">
+                <strong id="dashboard-revision-count">—</strong> due for revision
+              </p>
+              <ul class="dashboard-card__list" id="dashboard-revisions" aria-label="DSA revision reminders">
+                <li class="dashboard-card__empty">No problems are due for revision.</li>
+              </ul>
+            </article>
+
+            <article class="dashboard-card" aria-labelledby="dashboard-spending-title">
+              <div class="dashboard-card__heading">
+                <h3 id="dashboard-spending-title">This month's spending</h3>
+                <a href="#expenses" aria-label="Open Expenses">View expenses</a>
+              </div>
+              <p class="dashboard-card__metric"><strong id="dashboard-spending">—</strong><span>expenses this month</span></p>
+              <progress
+                class="dashboard-card__progress"
+                id="dashboard-budget-progress"
+                max="100"
+                value="0"
+                aria-label="Monthly spending budget"
+                hidden
+              ></progress>
+              <p class="dashboard-card__support" id="dashboard-budget-text">
+                No overall budget set for this month.
+              </p>
+            </article>
+
+            <article class="dashboard-card" aria-labelledby="dashboard-deadlines-title">
+              <div class="dashboard-card__heading">
+                <h3 id="dashboard-deadlines-title">Upcoming deadlines</h3>
+                <a href="#tasks-study" aria-label="Open Tasks and Study">View tasks</a>
+              </div>
+              <ul class="dashboard-card__list" id="dashboard-deadlines" aria-label="Upcoming task deadlines">
+                <li class="dashboard-card__empty">No upcoming task deadlines. Add a due date to a task to see it here.</li>
+              </ul>
+            </article>
+          </div>
+        </section>
+
         <section class="workspace" id="workspace" aria-labelledby="workspace-title">
           <header class="workspace__heading">
             <div>
@@ -602,5 +692,6 @@
     <script type="module" src="js/modules/expenses-ui.js"></script>
     <script type="module" src="js/modules/calendar.js"></script>
     <script type="module" src="js/navigation.js"></script>
+    <script type="module" src="js/modules/dashboard.js"></script>
   </body>
 </html>
