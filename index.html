@@ -109,7 +109,25 @@
               <p class="module-card__label">PLAN YOUR TIME</p>
               <h3 id="tasks-study-title">Tasks &amp; Study</h3>
               <p class="module-card__description">Plan tasks and make space for focused study.</p>
-              <span class="module-card__status">Coming soon</span>
+              <form class="task-form" id="task-form">
+                <label class="visually-hidden" for="task-input">New task title</label>
+                <input
+                  class="task-form__input"
+                  id="task-input"
+                  name="task"
+                  type="text"
+                  maxlength="120"
+                  placeholder="What needs to get done?"
+                  aria-describedby="task-message"
+                >
+                <button class="button button--primary task-form__button" type="submit">
+                  Add Task
+                </button>
+              </form>
+              <p class="task-message" id="task-message" role="status" aria-live="polite"></p>
+              <ul class="task-list" id="task-list" aria-label="Tasks">
+                <li class="task-list__empty">No tasks yet. Add your first task above.</li>
+              </ul>
             </article>
 
             <article class="module-card" id="dsa-tracker" tabindex="-1" aria-labelledby="dsa-tracker-title">
@@ -147,5 +165,6 @@
         </section>
       </main>
     </div>
+    <script type="module" src="js/modules/tasks.js"></script>
   </body>
 </html>
