@@ -232,8 +232,93 @@
               <span class="module-card__icon" aria-hidden="true">02</span>
               <p class="module-card__label">KEEP PRACTICING</p>
               <h3 id="dsa-tracker-title">DSA Tracker</h3>
-              <p class="module-card__description">A future home for your data structures and algorithms progress.</p>
-              <span class="module-card__status">Coming soon</span>
+              <p class="module-card__description">
+                Keep a personal record of practice, progress, and planned revisions.
+                LeetCode is a platform option; records are entered manually and are
+                not automatically synchronized.
+              </p>
+
+              <section class="dsa-summary" aria-label="Problem counts">
+                <div class="dsa-summary__status">
+                  <p>Solved</p>
+                  <strong id="dsa-solved-count">0</strong>
+                </div>
+                <div class="dsa-summary__status">
+                  <p>Attempted</p>
+                  <strong id="dsa-attempted-count">0</strong>
+                </div>
+                <div class="dsa-summary__status">
+                  <p>Revision needed</p>
+                  <strong id="dsa-revision-count">0</strong>
+                </div>
+              </section>
+
+              <form class="dsa-form" id="dsa-form">
+                <h4 class="dsa-form__heading" id="dsa-form-title">Add a problem</h4>
+                <div class="dsa-form__fields">
+                  <label class="visually-hidden" for="dsa-title">Problem title</label>
+                  <input class="task-form__input" id="dsa-title" name="title" type="text" maxlength="160" placeholder="Problem title" required>
+
+                  <label class="visually-hidden" for="dsa-platform">Platform</label>
+                  <select class="task-form__input" id="dsa-platform" name="platform" required>
+                    <option value="LeetCode">LeetCode</option>
+                    <option value="Codeforces">Codeforces</option>
+                    <option value="GeeksforGeeks">GeeksforGeeks</option>
+                    <option value="Other">Other</option>
+                  </select>
+
+                  <label class="visually-hidden" for="dsa-url">Problem URL</label>
+                  <input class="task-form__input dsa-form__wide" id="dsa-url" name="url" type="url" maxlength="2048" placeholder="https://example.com/problem" required>
+
+                  <label class="visually-hidden" for="dsa-topic">Topic</label>
+                  <input class="task-form__input" id="dsa-topic" name="topic" type="text" maxlength="80" placeholder="Topic (e.g. Graphs)" required>
+
+                  <label class="visually-hidden" for="dsa-difficulty">Difficulty</label>
+                  <select class="task-form__input" id="dsa-difficulty" name="difficulty" required>
+                    <option value="Easy">Easy</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Hard">Hard</option>
+                  </select>
+
+                  <label class="visually-hidden" for="dsa-status">Problem status</label>
+                  <select class="task-form__input" id="dsa-status" name="status" required>
+                    <option value="attempted">Attempted</option>
+                    <option value="solved">Solved</option>
+                    <option value="revision-needed">Revision needed</option>
+                  </select>
+
+                  <label class="dsa-form__label" for="dsa-date-solved">Date solved <span>(optional)</span></label>
+                  <input class="task-form__input" id="dsa-date-solved" name="dateSolved" type="date">
+
+                  <label class="dsa-form__label" for="dsa-next-revision">Next revision <span>(optional)</span></label>
+                  <input class="task-form__input" id="dsa-next-revision" name="nextRevisionDate" type="date">
+
+                  <label class="visually-hidden" for="dsa-notes">Notes (optional)</label>
+                  <textarea class="task-form__input dsa-form__wide dsa-form__notes" id="dsa-notes" name="notes" maxlength="2000" placeholder="Notes (optional)"></textarea>
+                </div>
+                <div class="dsa-form__actions">
+                  <button class="button button--primary" id="dsa-submit" type="submit">Add problem</button>
+                  <button class="button" id="dsa-cancel-edit" type="button" hidden>Cancel edit</button>
+                </div>
+              </form>
+
+              <p class="task-message" id="dsa-message" role="status" aria-live="polite"></p>
+
+              <div class="dsa-counts">
+                <section class="dsa-counts__group" aria-labelledby="dsa-topic-counts-title">
+                  <h4 id="dsa-topic-counts-title">Problems by topic</h4>
+                  <ul id="dsa-topic-counts" class="dsa-counts__list"></ul>
+                </section>
+                <section class="dsa-counts__group" aria-labelledby="dsa-difficulty-counts-title">
+                  <h4 id="dsa-difficulty-counts-title">Problems by difficulty</h4>
+                  <ul id="dsa-difficulty-counts" class="dsa-counts__list"></ul>
+                </section>
+              </div>
+
+              <section class="dsa-problems" aria-labelledby="dsa-problems-title">
+                <h4 id="dsa-problems-title">Your problems</h4>
+                <ul class="dsa-problem-list" id="dsa-problem-list" aria-label="DSA problem records"></ul>
+              </section>
             </article>
 
             <article class="module-card" id="habits" tabindex="-1" aria-labelledby="habits-title">
@@ -264,5 +349,6 @@
       </main>
     </div>
     <script type="module" src="js/modules/tasks.js"></script>
+    <script type="module" src="js/modules/dsa.js"></script>
   </body>
 </html>
