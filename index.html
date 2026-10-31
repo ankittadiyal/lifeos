@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta
+      name="description"
+      content="LifeOS is your calm, personal space for planning the day ahead."
+    >
+    <title>LifeOS — Your personal space</title>
+    <link rel="stylesheet" href="css/style.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Sidebar">
+        <a class="brand" href="#welcome" aria-label="LifeOS home">
+          <span class="brand__mark" aria-hidden="true">L</span>
+          <span class="brand__name">LifeOS</span>
+        </a>
+
+        <nav class="navigation" aria-label="Main navigation">
+          <p class="navigation__label">Workspace</p>
+          <ul class="navigation__list">
+            <li>
+              <a class="navigation__link navigation__link--active" href="#welcome" aria-current="page">
+                <span class="navigation__dot" aria-hidden="true"></span>
+                Dashboard
+              </a>
+            </li>
+            <li>
+              <span class="navigation__link navigation__link--disabled">
+                <span class="navigation__dot" aria-hidden="true"></span>
+                Focus
+                <span class="navigation__soon">Soon</span>
+              </span>
+            </li>
+            <li>
+              <span class="navigation__link navigation__link--disabled">
+                <span class="navigation__dot" aria-hidden="true"></span>
+                Habits
+                <span class="navigation__soon">Soon</span>
+              </span>
+            </li>
+            <li>
+              <span class="navigation__link navigation__link--disabled">
+                <span class="navigation__dot" aria-hidden="true"></span>
+                Notes
+                <span class="navigation__soon">Soon</span>
+              </span>
+            </li>
+          </ul>
+        </nav>
+
+        <div class="sidebar__footer">
+          <span class="sidebar__status-dot" aria-hidden="true"></span>
+          <span>A little progress, every day.</span>
+        </div>
+      </aside>
+
+      <main class="main-content" id="main-content">
+        <header class="topbar">
+          <p class="topbar__context">YOUR PERSONAL SPACE</p>
+          <span class="topbar__avatar" aria-label="Your profile">Y</span>
+        </header>
+
+        <section class="welcome" id="welcome" aria-labelledby="welcome-title">
+          <div class="welcome__copy">
+            <p class="eyebrow">A FRESH PAGE</p>
+            <h1 id="welcome-title">Welcome to <span>LifeOS.</span></h1>
+            <p class="welcome__description">
+              Make room for what matters. Your personal space to find focus,
+              build good rhythms, and move through life one step at a time.
+            </p>
+            <a class="welcome__link" href="#getting-started">
+              Take a look around
+              <span aria-hidden="true">&rarr;</span>
+            </a>
+          </div>
+
+          <div class="welcome__art" aria-hidden="true">
+            <div class="welcome__glow"></div>
+            <div class="welcome__orbit welcome__orbit--outer"></div>
+            <div class="welcome__orbit welcome__orbit--inner"></div>
+            <div class="welcome__core"></div>
+            <span class="welcome__spark welcome__spark--one"></span>
+            <span class="welcome__spark welcome__spark--two"></span>
+          </div>
+        </section>
+
+        <section class="getting-started" id="getting-started" aria-labelledby="getting-started-title">
+          <div class="getting-started__heading">
+            <div>
+              <p class="eyebrow">YOUR DASHBOARD</p>
+              <h2 id="getting-started-title">A calmer way to start</h2>
+            </div>
+            <span class="getting-started__step">01 <span>/ 04</span></span>
+          </div>
+
+          <div class="starter-card">
+            <span class="starter-card__icon" aria-hidden="true">✦</span>
+            <div>
+              <h3>Your space is ready</h3>
+              <p>
+                This is the beginning. Your tools for planning, focus, and
+                reflection will find a home here.
+              </p>
+            </div>
+            <span class="starter-card__status">JUST GETTING STARTED</span>
+          </div>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
