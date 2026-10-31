@@ -253,6 +253,43 @@
                 </div>
               </section>
 
+              <section class="dsa-insights" aria-labelledby="dsa-insights-title">
+                <h4 id="dsa-insights-title">Study insights</h4>
+                <div class="dsa-insights__totals">
+                  <div class="dsa-insight">
+                    <span>Total solved</span>
+                    <strong id="dsa-insight-solved">0</strong>
+                  </div>
+                  <div class="dsa-insight">
+                    <span>Easy solved</span>
+                    <strong id="dsa-insight-easy">0</strong>
+                  </div>
+                  <div class="dsa-insight">
+                    <span>Medium solved</span>
+                    <strong id="dsa-insight-medium">0</strong>
+                  </div>
+                  <div class="dsa-insight">
+                    <span>Hard solved</span>
+                    <strong id="dsa-insight-hard">0</strong>
+                  </div>
+                </div>
+                <div class="dsa-insights__details">
+                  <section class="dsa-insights__group" aria-labelledby="dsa-topic-progress-title">
+                    <h5 id="dsa-topic-progress-title">Topic progress <span>(solved / total)</span></h5>
+                    <ul id="dsa-topic-progress" class="dsa-counts__list"></ul>
+                  </section>
+                  <section class="dsa-insights__group" aria-labelledby="dsa-weekly-title">
+                    <h5 id="dsa-weekly-title">Solved this week <span id="dsa-weekly-range"></span></h5>
+                    <p class="dsa-insights__weekly-total"><strong id="dsa-weekly-count">0</strong> problems</p>
+                    <ul id="dsa-weekly-problems" class="dsa-insights__list"></ul>
+                  </section>
+                </div>
+                <section class="dsa-insights__group dsa-insights__revisions" aria-labelledby="dsa-revisions-title">
+                  <h5 id="dsa-revisions-title">Due for revision</h5>
+                  <ul id="dsa-revision-problems" class="dsa-insights__list"></ul>
+                </section>
+              </section>
+
               <form class="dsa-form" id="dsa-form">
                 <h4 class="dsa-form__heading" id="dsa-form-title">Add a problem</h4>
                 <div class="dsa-form__fields">

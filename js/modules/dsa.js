@@ -1,4 +1,5 @@
 import { loadData, saveData } from "../storage.js";
+import { calculateDsaInsights } from "./dsa-insights.js";
 
 const STORAGE_KEY = "lifeos.dsaProblems";
 const PLATFORMS = ["LeetCode", "Codeforces", "GeeksforGeeks", "Other"];
@@ -241,6 +242,15 @@ const difficultyCountsList = document.querySelector("#dsa-difficulty-counts");
 const solvedCount = document.querySelector("#dsa-solved-count");
 const attemptedCount = document.querySelector("#dsa-attempted-count");
 const revisionCount = document.querySelector("#dsa-revision-count");
+const insightSolved = document.querySelector("#dsa-insight-solved");
+const insightEasy = document.querySelector("#dsa-insight-easy");
+const insightMedium = document.querySelector("#dsa-insight-medium");
+const insightHard = document.querySelector("#dsa-insight-hard");
+const topicProgressList = document.querySelector("#dsa-topic-progress");
+const weeklyRange = document.querySelector("#dsa-weekly-range");
+const weeklyCount = document.querySelector("#dsa-weekly-count");
+const weeklyProblemsList = document.querySelector("#dsa-weekly-problems");
+const revisionProblemsList = document.querySelector("#dsa-revision-problems");
 let editingProblemId = null;
 
 function showStorageError(error) {
@@ -271,6 +281,84 @@ function appendCountRows(list, counts, emptyMessage) {
     item.append(name, value);
     list.append(item);
   }
+}
+
+function appendInsightRows(list, records, createRow, emptyMessage) {
+  list.replaceChildren();
+
+  if (records.length === 0) {
+    const item = document.createElement("li");
+    item.className = "dsa-insights__empty";
+    item.textContent = emptyMessage;
+    list.append(item);
+    return;
+  }
+
+  for (const record of records) {
+    list.append(createRow(record));
+  }
+}
+
+function createTopicProgressRow(topic) {
+  const item = document.createElement("li");
+  const label = document.createElement("span");
+  const count = document.createElement("strong");
+  const progress = document.createElement("span");
+  label.textContent = topic.topic;
+  count.textContent = `${topic.solved} / ${topic.total}`;
+  progress.className = "dsa-insights__percentage";
+  progress.textContent = `${topic.percentage}%`;
+  item.append(label, count, progress);
+  return item;
+}
+
+function createInsightProblemRow(problem, dateLabel) {
+  const item = document.createElement("li");
+  const title = document.createElement("span");
+  const date = document.createElement("time");
+  title.textContent = problem.title;
+  date.dateTime = dateLabel.value;
+  date.textContent = dateLabel.text;
+  item.append(title, date);
+  return item;
+}
+
+function renderInsights(problemList) {
+  const insights = calculateDsaInsights(problemList);
+
+  insightSolved.textContent = String(insights.totalSolved);
+  insightEasy.textContent = String(insights.solvedByDifficulty.Easy);
+  insightMedium.textContent = String(insights.solvedByDifficulty.Medium);
+  insightHard.textContent = String(insights.solvedByDifficulty.Hard);
+
+  appendInsightRows(
+    topicProgressList,
+    insights.topicProgress,
+    createTopicProgressRow,
+    "Add problems to see topic progress."
+  );
+
+  weeklyRange.textContent = `(${insights.week.start} – ${insights.week.end})`;
+  weeklyCount.textContent = String(insights.solvedThisWeek.length);
+  appendInsightRows(
+    weeklyProblemsList,
+    insights.solvedThisWeek,
+    (problem) => createInsightProblemRow(problem, {
+      value: problem.dateSolved,
+      text: problem.dateSolved,
+    }),
+    "No solved problems with valid dates this week."
+  );
+
+  appendInsightRows(
+    revisionProblemsList,
+    insights.dueForRevision,
+    (problem) => createInsightProblemRow(problem, {
+      value: problem.nextRevisionDate,
+      text: `Due ${problem.nextRevisionDate}`,
+    }),
+    "No problems are due for revision."
+  );
 }
 
 function createProblemCard(problem) {
@@ -347,6 +435,7 @@ function renderProblems() {
   revisionCount.textContent = String(counts.status["revision-needed"]);
   appendCountRows(topicCountsList, counts.byTopic, "No topics yet.");
   appendCountRows(difficultyCountsList, counts.byDifficulty, "No problems yet.");
+  renderInsights(currentProblems);
   problemList.replaceChildren();
 
   if (currentProblems.length === 0) {
