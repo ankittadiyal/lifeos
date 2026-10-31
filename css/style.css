@@ -6,7 +6,7 @@
   --color-surface-raised: #1c2428;
   --color-text: #edf2ef;
   --color-muted: #a0aca7;
-  --color-subtle: #74817b;
+  --color-subtle: #89958f;
   --color-border: #2b3531;
   --color-accent: #a7e6cb;
   --color-accent-soft: #1b3028;
@@ -61,6 +61,10 @@ button:not(:disabled) {
 
 a:focus-visible,
 button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible,
 .module-card:focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 3px;
@@ -844,7 +848,7 @@ button:focus-visible,
 }
 
 .task-item__action {
-  min-height: 32px;
+  min-height: 40px;
   padding: 0 var(--space-2);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-small);
@@ -1256,7 +1260,7 @@ button:focus-visible,
 }
 
 .habit-item__actions .button {
-  min-height: 32px;
+  min-height: 40px;
   padding: 0 var(--space-2);
   font-size: 11px;
 }
@@ -1647,9 +1651,9 @@ button:focus-visible,
 
 .calendar-view__nav {
   display: grid;
-  width: 36px;
-  height: 36px;
-  flex: 0 0 36px;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
   place-items: center;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-medium);
@@ -1665,7 +1669,7 @@ button:focus-visible,
 }
 
 .calendar-view__today {
-  min-height: 34px;
+  min-height: 40px;
   padding: 0 var(--space-3);
   font-size: 11px;
 }
@@ -1833,6 +1837,12 @@ button:focus-visible,
   }
 }
 
+@media (max-width: 900px) {
+  .module-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 760px) {
   .app-shell {
     grid-template-columns: 1fr;
@@ -1983,6 +1993,36 @@ button:focus-visible,
 
   .transaction-item__actions {
     justify-content: flex-start;
+  }
+
+  .calendar-view__header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .calendar-view__month-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .calendar-view__month-controls h4 {
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+}
+
+@media (max-width: 360px) {
+  .task-form__fields,
+  .dsa-form__fields,
+  .habit-form__fields,
+  .expense-form__fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .task-form__fields #task-input,
+  .dsa-form__wide,
+  .expense-form__wide {
+    grid-column: auto;
   }
 }
 
