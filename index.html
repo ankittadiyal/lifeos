@@ -363,7 +363,55 @@
               <p class="module-card__label">BUILD YOUR RHYTHM</p>
               <h3 id="habits-title">Habits</h3>
               <p class="module-card__description">Make room for small routines that add up over time.</p>
-              <span class="module-card__status">Coming soon</span>
+
+              <form class="habit-form" id="habit-form">
+                <h4 class="habit-form__heading">Create or edit a habit</h4>
+                <div class="habit-form__fields">
+                  <label class="visually-hidden" for="habit-title">Habit name</label>
+                  <input
+                    class="task-form__input"
+                    id="habit-title"
+                    name="title"
+                    type="text"
+                    maxlength="100"
+                    placeholder="Habit name (e.g. Read)"
+                    required
+                  >
+                  <label class="visually-hidden" for="habit-frequency">Target check-ins per week</label>
+                  <input
+                    class="task-form__input"
+                    id="habit-frequency"
+                    name="targetFrequency"
+                    type="number"
+                    min="1"
+                    max="7"
+                    step="1"
+                    value="7"
+                    aria-label="Target check-ins per week (1 to 7)"
+                    required
+                  >
+                </div>
+                <div class="habit-form__actions">
+                  <button class="button button--primary" id="habit-submit" type="submit">Add habit</button>
+                  <button class="button" id="habit-cancel-edit" type="button" hidden>Cancel edit</button>
+                </div>
+              </form>
+
+              <p class="task-message" id="habit-message" role="status" aria-live="polite"></p>
+
+              <section class="habit-check-ins" aria-labelledby="habit-check-in-title">
+                <div class="habit-check-ins__header">
+                  <div>
+                    <h4 id="habit-check-in-title">Daily check-ins</h4>
+                    <p>Choose a local calendar date, then mark each habit complete.</p>
+                  </div>
+                  <label class="habit-check-ins__date" for="habit-check-in-date">
+                    Date
+                    <input class="task-form__input" id="habit-check-in-date" name="checkInDate" type="date" required>
+                  </label>
+                </div>
+                <ul class="habit-list" id="habit-list" aria-label="Your habits"></ul>
+              </section>
             </article>
 
             <article class="module-card" id="expenses" tabindex="-1" aria-labelledby="expenses-title">
@@ -387,5 +435,6 @@
     </div>
     <script type="module" src="js/modules/tasks.js"></script>
     <script type="module" src="js/modules/dsa.js"></script>
+    <script type="module" src="js/modules/habits-ui.js"></script>
   </body>
 </html>
