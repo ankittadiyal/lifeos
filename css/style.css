@@ -1067,10 +1067,15 @@ button:focus-visible,
   overflow-wrap: anywhere;
 }
 
-.habit-item__target {
+.habit-item__target,
+.habit-item__analytics {
   margin: var(--space-1) 0 0;
   color: var(--color-muted);
   font-size: 11px;
+}
+
+.habit-item__analytics {
+  line-height: 1.5;
 }
 
 .habit-item__actions {

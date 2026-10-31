@@ -8,6 +8,7 @@ import {
   recordHabitCompletion,
   updateHabit,
 } from "./habits.js";
+import { calculateHabitAnalytics } from "./habit-analytics.js";
 
 const form = document.querySelector("#habit-form");
 const titleInput = document.querySelector("#habit-title");
@@ -71,7 +72,17 @@ function createHabitItem(habit, selectedDate) {
   const target = document.createElement("p");
   target.className = "habit-item__target";
   target.textContent = `Target: ${habit.targetFrequency} ${habit.targetFrequency === 1 ? "time" : "times"} per week`;
-  details.append(title, target);
+  const analytics = calculateHabitAnalytics(
+    getHabitCompletionDates(habit.id),
+    getTodayDateString()
+  );
+  const analyticsLine = document.createElement("p");
+  analyticsLine.className = "habit-item__analytics";
+  analyticsLine.textContent =
+    `Current streak: ${analytics.currentStreak} ${analytics.currentStreak === 1 ? "day" : "days"} · ` +
+    `Longest: ${analytics.longestStreak} ${analytics.longestStreak === 1 ? "day" : "days"} · ` +
+    `Last 7 days: ${analytics.sevenDayCompletionCount}/7 (${analytics.sevenDayCompletionRate}%)`;
+  details.append(title, target, analyticsLine);
 
   const actions = document.createElement("div");
   actions.className = "habit-item__actions";
