@@ -525,6 +525,14 @@ button:focus-visible,
   flex: 0 0 auto;
 }
 
+.task-form__cancel[hidden] {
+  display: none;
+}
+
+.task-form__cancel {
+  min-height: 40px;
+}
+
 .task-message {
   min-height: 18px;
   margin: var(--space-2) 0 0;
@@ -592,9 +600,14 @@ button:focus-visible,
   overflow-wrap: anywhere;
 }
 
-.task-item__delete {
-  min-height: 32px;
+.task-item__actions {
+  display: flex;
   flex: 0 0 auto;
+  gap: var(--space-2);
+}
+
+.task-item__action {
+  min-height: 32px;
   padding: 0 var(--space-2);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-small);
@@ -603,7 +616,12 @@ button:focus-visible,
   font-size: 11px;
 }
 
-.task-item__delete:hover {
+.task-item__action:hover {
+  border-color: #547461;
+  color: var(--color-accent);
+}
+
+.task-item__action--delete:hover {
   border-color: #8d5b5b;
   color: #f0aaaa;
 }

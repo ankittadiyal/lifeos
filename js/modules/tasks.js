@@ -213,6 +213,9 @@ const taskPriority = document.querySelector("#task-priority");
 const taskDueDate = document.querySelector("#task-due-date");
 const taskList = document.querySelector("#task-list");
 const taskMessage = document.querySelector("#task-message");
+const taskSubmitButton = taskForm.querySelector('button[type="submit"]');
+const cancelEditButton = document.querySelector("#cancel-task-edit");
+let editingTaskId = null;
 
 function showStorageError(error) {
   console.error("Could not save tasks to browser storage.", error);
@@ -266,37 +269,113 @@ function renderTasks() {
     taskDetails.append(taskTitle, taskMeta);
     taskLabel.append(taskCheckbox, taskDetails);
 
+    const editButton = document.createElement("button");
+    editButton.className = "task-item__action";
+    editButton.type = "button";
+    editButton.dataset.taskAction = "edit";
+    editButton.textContent = "Edit";
+    editButton.setAttribute("aria-label", `Edit "${task.title}"`);
+
     const deleteButton = document.createElement("button");
-    deleteButton.className = "task-item__delete";
+    deleteButton.className = "task-item__action task-item__action--delete";
     deleteButton.type = "button";
+    deleteButton.dataset.taskAction = "delete";
     deleteButton.textContent = "Delete";
     deleteButton.setAttribute("aria-label", `Delete "${task.title}"`);
 
-    taskItem.append(taskLabel, deleteButton);
+    const taskActions = document.createElement("div");
+    taskActions.className = "task-item__actions";
+    taskActions.append(editButton, deleteButton);
+
+    taskItem.append(taskLabel, taskActions);
     taskList.append(taskItem);
-
-    taskCheckbox.addEventListener("change", () => {
-      try {
-        toggleTaskCompletion(task.id);
-        taskMessage.textContent = "";
-        renderTasks();
-      } catch (error) {
-        taskCheckbox.checked = task.completed;
-        showStorageError(error);
-      }
-    });
-
-    deleteButton.addEventListener("click", () => {
-      try {
-        deleteTask(task.id);
-        taskMessage.textContent = "";
-        renderTasks();
-      } catch (error) {
-        showStorageError(error);
-      }
-    });
   }
 }
+
+function resetTaskForm() {
+  taskForm.reset();
+  editingTaskId = null;
+  taskSubmitButton.textContent = "Add Task";
+  cancelEditButton.hidden = true;
+  taskMessage.textContent = "";
+}
+
+function startEditingTask(taskId) {
+  const task = listTasks().find((currentTask) => currentTask.id === taskId);
+
+  if (!task) {
+    taskMessage.textContent = "That task could not be found.";
+    return;
+  }
+
+  editingTaskId = task.id;
+  taskInput.value = task.title;
+  taskCategory.value = task.category;
+  taskPriority.value = task.priority;
+  taskDueDate.value = task.dueDate;
+  taskSubmitButton.textContent = "Save Changes";
+  cancelEditButton.hidden = false;
+  taskMessage.textContent = `Editing "${task.title}".`;
+  taskInput.focus();
+}
+
+taskList.addEventListener("change", (event) => {
+  if (!(event.target instanceof HTMLInputElement)) {
+    return;
+  }
+
+  if (!event.target.matches(".task-item__checkbox")) {
+    return;
+  }
+
+  const taskItem = event.target.closest(".task-item");
+
+  if (!taskItem) {
+    return;
+  }
+
+  try {
+    toggleTaskCompletion(taskItem.dataset.taskId);
+    taskMessage.textContent = "";
+    renderTasks();
+  } catch (error) {
+    event.target.checked = !event.target.checked;
+    showStorageError(error);
+  }
+});
+
+taskList.addEventListener("click", (event) => {
+  if (!(event.target instanceof Element)) {
+    return;
+  }
+
+  const actionButton = event.target.closest("[data-task-action]");
+  const taskItem = actionButton?.closest(".task-item");
+
+  if (!actionButton || !taskItem) {
+    return;
+  }
+
+  const taskId = taskItem.dataset.taskId;
+
+  if (actionButton.dataset.taskAction === "edit") {
+    startEditingTask(taskId);
+    return;
+  }
+
+  if (actionButton.dataset.taskAction === "delete") {
+    try {
+      deleteTask(taskId);
+      if (editingTaskId === taskId) {
+        resetTaskForm();
+      }
+      taskMessage.textContent = "";
+      renderTasks();
+    } catch (error) {
+      showStorageError(error);
+    }
+  }
+});
 
 taskForm.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -308,21 +387,34 @@ taskForm.addEventListener("submit", (event) => {
   }
 
   try {
-    createTask({
+    const taskDetails = {
       title: taskInput.value,
       category: taskCategory.value,
       priority: taskPriority.value,
       dueDate: taskDueDate.value,
-    });
+    };
+
+    if (editingTaskId) {
+      updateTask(editingTaskId, taskDetails);
+    } else {
+      createTask(taskDetails);
+    }
   } catch (error) {
+    if (error instanceof TypeError) {
+      taskMessage.textContent = error.message;
+      taskInput.focus();
+      return;
+    }
+
     showStorageError(error);
     return;
   }
 
-  taskMessage.textContent = "";
-  taskForm.reset();
+  resetTaskForm();
   taskInput.focus();
   renderTasks();
 });
+
+cancelEditButton.addEventListener("click", resetTaskForm);
 
 renderTasks();

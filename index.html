@@ -111,7 +111,7 @@
               <p class="module-card__description">Plan tasks and make space for focused study.</p>
               <form class="task-form" id="task-form">
                 <div class="task-form__fields">
-                  <label class="visually-hidden" for="task-input">New task title</label>
+                  <label class="visually-hidden" for="task-input">Task title</label>
                   <input
                     class="task-form__input"
                     id="task-input"
@@ -123,13 +123,13 @@
                     required
                   >
                   <label class="visually-hidden" for="task-category">Task category</label>
-                  <select class="task-form__input" id="task-category" name="category">
+                  <select class="task-form__input" id="task-category" name="category" required>
                     <option value="Study">Study</option>
                     <option value="DSA">DSA</option>
                     <option value="Personal">Personal</option>
                   </select>
                   <label class="visually-hidden" for="task-priority">Task priority</label>
-                  <select class="task-form__input" id="task-priority" name="priority">
+                  <select class="task-form__input" id="task-priority" name="priority" required>
                     <option value="Medium">Medium priority</option>
                     <option value="High">High priority</option>
                     <option value="Low">Low priority</option>
@@ -145,6 +145,9 @@
                 </div>
                 <button class="button button--primary task-form__button" type="submit">
                   Add Task
+                </button>
+                <button class="button task-form__cancel" id="cancel-task-edit" type="button" hidden>
+                  Cancel edit
                 </button>
               </form>
               <p class="task-message" id="task-message" role="status" aria-live="polite"></p>
